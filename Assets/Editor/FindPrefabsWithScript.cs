@@ -3,10 +3,12 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.Linq;
 /*
- * Created by Jake on 11-17-15 with the support of his cat Beaker. 
- * Tested in Unity 5.2.2f1
+ * Created by Jake on 11-17-15 with the support of his cat Beaker.
  * www.beakerandjake.com
- *  
+ *
+ * Updated by Artyom Kolesnikov (https://github.com/faveris) 2018.
+ *
+ * Tested in Unity 2017.2.1f1
  * */
 
 /// <summary>
@@ -166,14 +168,14 @@ public class FindPrefabsWithScript
                 }
 
                 //Use the AssetDatabase to load the prefab. 
-                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) as GameObject;
+                var gameObject = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath) as GameObject;
 
-                //See if the prefab has the component. 
-                if (PrefabHasScript(prefab, selectedType))
+                //See if the prefab has the component.
+                var components = gameObject.GetComponentsInChildren(selectedType, true);
+                foreach (var component in components)
                 {
-                    //It did! Return the instance id of this prefab. 
-                    yield return prefab.GetInstanceID();
-                }                
+                    yield return component.gameObject.GetInstanceID();
+                }
 
                 //Increment cound so progressbar displays correctly. 
                 currentPrefab++;
@@ -192,41 +194,6 @@ public class FindPrefabsWithScript
             {
                 yield return AssetDatabase.GUIDToAssetPath(prefabGUID);
             }
-        }
-
-        /// <summary>
-        /// Search the specified prefabs hierarchy and see if it has the selectedType attached. 
-        /// </summary>
-        public static bool PrefabHasScript(GameObject prefab, System.Type selectedType)
-        {
-            //Sanity
-            if(prefab == null)
-            {
-                return false;
-            }
-
-            //Now that the prefab is loaded we can see if it has our script component attached. 
-            //Search on the root first instead of searching in children, this could provide 
-            //a bit of a speedup for big hierarchies. 
-            var allComponents = prefab.GetComponents(selectedType);
-
-            if (allComponents.Length != 0)
-            {
-                return true;
-            }
-            else
-            {
-                //We didn't find the component on the root, search in children.. 
-                allComponents = prefab.GetComponentsInChildren(selectedType, true);
-
-                if (allComponents != null && allComponents.Length > 0)
-                {
-                    //One of the children had the component, return the id of root. 
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         /// <summary>

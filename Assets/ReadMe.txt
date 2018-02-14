@@ -3,7 +3,8 @@ Find Prefabs With Component
 ----------------------------
 
 Created by jake@beakerandjake.com 2015.
-Tested in Unity 5.
+Updated by Artyom Kolesnikov (https://github.com/faveris) 2018.
+Tested in Unity 2017.2.1f1
 
 ----------------------------
 Description. 
